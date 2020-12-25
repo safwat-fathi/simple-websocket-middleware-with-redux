@@ -1,15 +1,14 @@
 import * as actions from "./actions";
 
-const socketMiddleware = () => {
+const socketMiddleware = ({ dispatch, getState }) => {
   let socket = null;
 
-  const onOpen = (dispatch) => (event) => {
-    console.log("websocket open", event.target.url);
-    dispatch(actions.wsConnect(event.target.url));
+  const onOpen = (payload) => {
+    dispatch(actions.wsConnected(payload));
   };
 
-  const onClose = (dispatch) => () => {
-    dispatch(actions.wsDisconnected());
+  const onClose = (payload) => {
+    dispatch(actions.wsDisconnected(payload));
   };
 
   return (next) => (action) => {
@@ -22,17 +21,23 @@ const socketMiddleware = () => {
         }
 
         socket = new WebSocket(host);
-        console.log("websocket opened");
+        socket.onopen = (e) => {
+          console.log(e);
+          onOpen(true);
+        };
+        socket.onclose = (e) => {
+          console.log(e);
+          onClose(false);
+        };
         break;
       case "WS_DISCONNECT":
         if (socket !== null) {
           socket.close();
         }
         socket = null;
-        console.log("websocket closed");
         break;
       default:
-        console.log("the next action:", action);
+        // console.log("the next action:", action);
         return next(action);
     }
   };
