@@ -1,19 +1,19 @@
-export const wsConnect = (host) => ({ type: "WS_CONNECT", host });
-export const wsConnecting = (host) => ({ type: "WS_CONNECTING", host });
+export const wsConnect = (payload) => ({ type: "WS_CONNECT", payload });
 export const wsConnected = (payload) => ({ type: "WS_CONNECTED", payload });
-export const wsDisconnect = (host) => ({ type: "WS_DISCONNECT", host });
+export const wsDisconnect = () => ({ type: "WS_DISCONNECT" });
 export const wsDisconnected = (payload) => ({
   type: "WS_DISCONNECTED",
   payload,
 });
-// =======================================================
-// =======================================================
-// export const wsConnect = (payload) => {
-// 	return dispatch => {
-// 		dispatch(wsConnected(true))
-// 	}
-// };
-// export const wsConnecting = (host) => ({ type: "WS_CONNECTING", host });
-// export const wsConnected = (payload) => ({ type: "WS_CONNECTED", payload });
-// export const wsDisconnect = (host) => ({ type: "WS_DISCONNECT", host });
-// export const wsDisconnected = (host) => ({ type: "WS_DISCONNECTED", host });
+export const wsReceive = (payload) => {
+  return {
+    type: "WS_RECEIVE",
+    payload,
+  };
+};
+export const wsSend = (payload) => {
+  return {
+    type: "WS_SEND",
+    payload,
+  };
+};

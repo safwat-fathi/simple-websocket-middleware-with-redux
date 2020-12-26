@@ -11,8 +11,12 @@ const socketMiddleware = ({ dispatch, getState }) => {
     dispatch(actions.wsDisconnected(payload));
   };
 
+  const onMessage = (payload) => {
+    dispatch(actions.wsReceive(payload));
+  };
+
   return (next) => (action) => {
-    const { type, host } = action;
+    const { type, payload } = action;
 
     switch (type) {
       case "WS_CONNECT":
@@ -20,14 +24,18 @@ const socketMiddleware = ({ dispatch, getState }) => {
           socket.close();
         }
 
-        socket = new WebSocket(host);
+        socket = new WebSocket(payload);
         socket.onopen = (e) => {
-          console.log(e);
+          console.log(e.type);
           onOpen(true);
         };
         socket.onclose = (e) => {
-          console.log(e);
+          console.log(e.type);
           onClose(false);
+        };
+        socket.onmessage = (e) => {
+          console.log(e.type);
+          onMessage(payload);
         };
         break;
       case "WS_DISCONNECT":
@@ -36,8 +44,11 @@ const socketMiddleware = ({ dispatch, getState }) => {
         }
         socket = null;
         break;
+      case "WS_SEND":
+        console.log(payload);
+        socket.send(payload);
+        break;
       default:
-        // console.log("the next action:", action);
         return next(action);
     }
   };

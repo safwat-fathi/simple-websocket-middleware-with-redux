@@ -1,5 +1,5 @@
 const initState = {
-  websocketClient: null,
+  message: {},
   connected: false,
   error: null,
 };
@@ -18,7 +18,13 @@ export const reducer = (state = initState, action) => {
       console.log("websocket disconnected");
       return {
         ...state,
-        connected: false,
+        connected: payload,
+      };
+    case "WS_RECEIVE":
+      console.log("message received");
+      return {
+        ...state,
+        message: payload,
       };
     default:
       return state;
