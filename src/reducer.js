@@ -20,7 +20,7 @@ export const reducer = (state = initState, action) => {
         ...state,
         connected: payload,
       };
-    case "WS_RECEIVE":
+    case "WS_RECEIVE": // NEW_MESSAGE
       console.log("message received");
       return {
         ...state,
