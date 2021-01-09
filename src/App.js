@@ -1,15 +1,11 @@
 import "./App.css";
 // react-router
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-// redux
-import { connect } from "react-redux";
 // app components
 import Home from "./Home";
 import Room from "./Room";
 
-function App(props) {
-  console.log(props);
-
+function App() {
   return (
     <div>
       <Router>
@@ -25,6 +21,4 @@ function App(props) {
   );
 }
 
-const mapStateToProps = (state) => state;
-
-export default connect(mapStateToProps)(App);
+export default App;

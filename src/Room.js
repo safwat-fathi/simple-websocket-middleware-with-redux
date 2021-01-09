@@ -1,11 +1,24 @@
 import React, { useState, useEffect } from "react";
-// redux
-import { connect } from "react-redux";
-// redux actions
-import { wsConnect, wsDisconnect, wsSend } from "./actions";
 
-const Room = (props) => {
-  const { wsConnect, wsDisconnect, wsSend } = props;
+// redux
+import { useSelector, useDispatch } from "react-redux";
+// redux actions
+import {
+  connect,
+  disconnect,
+  send,
+  newMessage,
+  selectWebSocketMessageReceived,
+  selectWebSocketState,
+} from "./wsSlice";
+
+const userID = Math.ceil(Math.random() * 10);
+
+const Room = () => {
+  const dispatch = useDispatch();
+
+  const webSocketState = useSelector(selectWebSocketState);
+  const webSocketMessage = useSelector(selectWebSocketMessageReceived);
 
   const [inputVal, setInputVal] = useState("");
 
@@ -17,20 +30,30 @@ const Room = (props) => {
     e.preventDefault();
 
     console.log(inputVal);
-    wsSend(
-      JSON.stringify({
-        type: "chatting",
-        room: "CS500",
-        payload: inputVal,
-      })
+
+    dispatch(
+      send(
+        JSON.stringify({
+          type: "chatting",
+          room: "CS500",
+          payload: inputVal,
+        })
+      )
     );
   };
 
   useEffect(() => {
-    wsConnect("ws://127.0.0.1:8080");
+    dispatch(
+      connect({
+        host: "ws://127.0.0.1:8080",
+        data: { userID, userName: "Safwat" },
+      })
+    );
 
     return () => {
-      wsDisconnect();
+      dispatch(
+        disconnect({ type: "closing", room: "CS500", payload: { userID } })
+      );
     };
   }, []);
 
@@ -45,14 +68,4 @@ const Room = (props) => {
   );
 };
 
-const mapStateToProps = (state) => state;
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    wsConnect: (payload) => dispatch(wsConnect(payload)),
-    wsDisconnect: (payload) => dispatch(wsDisconnect(payload)),
-    wsSend: (payload) => dispatch(wsSend(payload)),
-  };
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Room);
+export default Room;
